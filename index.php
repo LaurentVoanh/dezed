@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="cyber">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VOANH — Interface Mistral AI</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://web-4.art/voanh.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header id="voanh-header">
+  <div class="brand">
+    <div class="brand-logo">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="18,2 34,12 34,24 18,34 2,24 2,12" stroke="#00e5ff" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <polygon points="18,7 29,13 29,23 18,29 7,23 7,13" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.3"/>
+        <circle cx="18" cy="18" r="4" fill="#00e5ff" opacity="0.9"/>
+        <line x1="18" y1="2" x2="18" y2="7" stroke="#00e5ff" stroke-width="1"/>
+        <line x1="18" y1="29" x2="18" y2="34" stroke="#00e5ff" stroke-width="1"/>
+        <line x1="2" y1="12" x2="7" y2="13" stroke="#00e5ff" stroke-width="1"/>
+        <line x1="34" y1="12" x2="29" y2="13" stroke="#00e5ff" stroke-width="1"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">VOANH</div>
+      <div class="brand-sub">MISTRAL AI INTERFACE</div>
+    </div>
+  </div>
+
+  <div class="header-controls">
+    <select class="hud-select" id="model-select"></select>
+    <select class="hud-select" id="agent-select">
+      <option value="">▸ NO AGENT</option>
+    </select>
+    <button class="hud-btn" id="clear-chat">⌫ CLEAR</button>
+    <button class="hud-btn" id="new-chat">+ NEW</button>
+    <button class="hud-btn" id="open-archives-desktop">⬡ ARCHIVES</button>
+  </div>
+
+  <div class="header-right">
+    <span class="status-pill" id="api-status"><span class="status-dot"></span>OFFLINE</span>
+    <select class="hud-select" id="theme-select">
+      <option value="cyber">◈ CYBER</option>
+      <option value="midnight">◈ MIDNIGHT</option>
+      <option value="light">◈ LIGHT</option>
+    </select>
+    <button class="hud-btn primary" id="open-api-modal">⬡ API KEY</button>
+    <button class="hud-btn" id="open-agent-modal">⚙ AGENT</button>
+    <button class="hud-btn" id="open-data-modal">⬡ DATA</button>
+  </div>
+  <!-- BURGER (mobile only) -->
+  <button id="burger-btn" title="Menu">☰</button>
+</header>
+
+<!-- ═══════════════════ MOBILE MENU ═══════════════════ -->
+<div id="mobile-menu">
+  <!-- Row 1 : Statut + Thème -->
+  <div class="mobile-row">
+    <span class="status-pill" id="api-status-mob"><span class="status-dot"></span>OFFLINE</span>
+    <select class="hud-select" id="theme-select-mob" style="flex:1">
+      <option value="cyber">◈ CYBER</option>
+      <option value="midnight">◈ MIDNIGHT</option>
+      <option value="light">◈ LIGHT</option>
+    </select>
+  </div>
+  <!-- Row 2 : Modèle + Agent -->
+  <div class="mobile-row">
+    <select class="hud-select" id="model-select-mob" style="flex:1"></select>
+    <select class="hud-select" id="agent-select-mob" style="flex:1">
+      <option value="">▸ NO AGENT</option>
+    </select>
+  </div>
+  <!-- Row 3 : Actions -->
+  <div class="mobile-row">
+    <button class="hud-btn primary" id="open-api-modal-mob" style="flex:1">⬡ API KEY</button>
+    <button class="hud-btn" id="open-agent-modal-mob" style="flex:1">⚙ AGENT</button>
+    <button class="hud-btn" id="open-data-modal-mob" style="flex:1">⬡ DATA</button>
+  </div>
+  <!-- Row 4 : Chat -->
+  <div class="mobile-row">
+    <button class="hud-btn" id="clear-chat-mob" style="flex:1">⌫ CLEAR</button>
+    <button class="hud-btn" id="new-chat-mob" style="flex:1">+ NEW CHAT</button>
+    <button class="hud-btn" id="archives-mob" style="flex:1">⬡ ARCHIVES</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ CHAT ═══════════════════ -->
+<main id="chat-container"></main>
+
+<!-- ═══════════════════ INPUT ═══════════════════ -->
+<div id="input-area" style="position:relative">
+  <button id="voice-btn" title="Dictée vocale">🎤</button>
+  <textarea id="user-input" placeholder="Transmettez votre message… (Entrée pour envoyer, Maj+Entrée pour nouvelle ligne)" rows="1"></textarea>
+  <button id="send-btn">SEND ▶</button>
+</div>
+
+<!-- ═══════════════════ ARCHIVES ═══════════════════ -->
+<button id="archives-btn" title="Archives des conversations">⬡</button>
+<div id="archives-panel">
+  <div class="archives-header">
+    <h3>⬡ ARCHIVES</h3>
+    <button class="btn-ghost" id="archives-new-btn" style="padding:3px 8px;font-size:9px;border-radius:3px;letter-spacing:1px">+ NOUVEAU</button>
+  </div>
+  <div class="archives-search">
+    <input type="text" id="archives-search-input" placeholder="Rechercher une conversation…">
+  </div>
+  <div class="archives-list" id="archives-list">
+    <div class="archive-empty">Aucune conversation sauvegardée</div>
+  </div>
+</div>
+<button id="scroll-bottom" title="Descendre">↓</button>
+
+<!-- ═══════════════════ MEMORY ═══════════════════ -->
+<button id="memory-toggle" title="Mémoire Globale">⬡</button>
+<div id="memory-panel">
+  <div class="memory-header">
+    <h3>⬡ MÉMOIRE GLOBALE</h3>
+    <button class="btn-ghost" id="memory-clear" style="padding:3px 8px;font-size:10px;border-radius:3px">EFFACER</button>
+  </div>
+  <div class="memory-list" id="memory-list"></div>
+  <div class="memory-input">
+    <input type="text" id="memory-input" placeholder="Ajouter à la mémoire…">
+    <button id="memory-add">+</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODAL : API KEY ═══════════════════ -->
+<div class="modal-overlay" id="api-modal">
+  <div class="modal-box">
+    <div class="corner-deco corner-tl"></div>
+    <div class="corner-deco corner-tr"></div>
+    <div class="corner-deco corner-bl"></div>
+    <div class="corner-deco corner-br"></div>
+    <div class="modal-header">
+      <div class="modal-title">⬡ ACTIVATION API MISTRAL</div>
+      <button class="modal-close" id="close-api-modal">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- FORMULAIRE -->
+      <div class="field-group">
+        <label class="field-label">🔑 Clé API Mistral</label>
+        <input type="password" class="field-input" id="api-key-input" placeholder="Collez votre clé ici…">
+        <div class="field-hint">Format : min. 20 caractères — ex. <code style="font-family:var(--font-mono);color:var(--text-code);font-size:11px">sk-xxxxxxxxxxxxxxxxxxxxxxxx</code></div>
+      </div>
+      <div class="btn-row" style="margin-top:0;padding-top:0;border-top:none;margin-bottom:20px">
+        <button class="btn-ghost" id="close-api-modal-2">Annuler</button>
+        <button class="btn-ghost danger" id="delete-api-key" style="border-color:rgba(255,51,102,0.3);color:var(--danger)">🗑 SUPPRIMER</button>
+        <button class="btn-primary" id="save-api-key">💾 ENREGISTRER ET ACTIVER</button>
+      </div>
+
+      <!-- SÉPARATEUR -->
+      <div class="section-title">GUIDE D'ACTIVATION — ACCÈS GRATUIT</div>
+
+      <!-- INFO TUTORIEL -->
+      <div class="info-block" style="margin-top:12px">
+        <strong>✦ Free Tier Mistral AI — Chiffres Officiels 2025</strong><br>
+        Le Free Tier de Mistral AI donne accès aux modèles via l'API sans abonnement payant. Les limites exactes dépendent du modèle utilisé, mais typiquement :
+        <ul style="padding-left:16px;margin-top:8px;line-height:2">
+          <li>Modèles légers (Ministral, Mistral Small) : <strong>~1 req/sec</strong>, plusieurs dizaines de milliers de tokens/min</li>
+          <li>Modèles large (Mistral Large, Codestral) : <strong>~500 req/heure</strong>, limites adaptées</li>
+          <li>Aucun frais de carte bancaire pour commencer</li>
+        </ul>
+        <div style="margin-top:8px;font-size:12px;color:var(--text-dim)">▸ Consultez <code>console.mistral.ai</code> → votre tableau de bord pour voir vos quotas en temps réel.</div>
+      </div>
+
+      <!-- ÉTAPES -->
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--cyan);margin:14px 0 10px;opacity:0.7">PROCÉDURE EN 4 ÉTAPES</div>
+      <ol class="step-list">
+        <li>Ouvrez <strong><code>console.mistral.ai</code></strong> dans votre navigateur</li>
+        <li>Cliquez sur <strong>"Sign Up"</strong> → créez votre compte (email + mot de passe, ou OAuth Google)</li>
+        <li>Dans le menu latéral, allez dans <strong>"API Keys"</strong> → cliquez <strong>"Create new key"</strong> → nommez-la (ex. <em>voanh-key</em>)</li>
+        <li>Copiez la clé générée (visible <strong>une seule fois</strong>) → collez-la dans le champ ci-dessus</li>
+      </ol>
+
+      <div class="success-block">
+        <strong>🔒 Persistance garantie 365 jours</strong><br>
+        Votre clé API est stockée dans un cookie sécurisé <strong>ET</strong> dans le stockage local de votre navigateur. Elle est automatiquement restaurée à chaque visite et n'est jamais transmise à aucun serveur tiers — uniquement envoyée directement à <code style="font-size:11px;color:var(--neon)">api.mistral.ai</code>.
+      </div>
+
+      <div style="margin-top:12px;font-size:12px;color:var(--text-dim);text-align:center">
+        Documentation officielle : <a href="https://docs.mistral.ai" target="_blank" style="color:var(--cyan)">docs.mistral.ai</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODAL : AGENT ═══════════════════ -->
+<div class="modal-overlay" id="agent-modal">
+  <div class="modal-box">
+    <div class="corner-deco corner-tl"></div>
+    <div class="corner-deco corner-tr"></div>
+    <div class="corner-deco corner-bl"></div>
+    <div class="corner-deco corner-br"></div>
+    <div class="modal-header">
+      <div class="modal-title">⚙ CRÉER UN AGENT IA</div>
+      <button class="modal-close" id="close-agent-modal">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- EXPLICATION DU CERVEAU CENTRAL -->
+      <div class="info-block" style="border-left-color:var(--neon)">
+        <strong style="color:var(--neon)">▸ Qu'est-ce qu'un Agent VOANH ?</strong><br>
+        Un Agent est un <em>cerveau central</em> qui dirige chaque conversation. Il définit la <strong>personnalité</strong>, le <strong>domaine d'expertise</strong>, le <strong>ton</strong> et les <strong>règles comportementales</strong> du modèle IA. Une fois activé, chaque réponse est façonnée par ses instructions. Vous pouvez créer plusieurs agents spécialisés (dev, rédaction, analyse, recherche…) et switcher selon la tâche.
+      </div>
+
+      <!-- ONGLETS AGENTS EXISTANTS -->
+      <div id="agent-existing-list"></div>
+
+      <div class="section-title">CONFIGURATION DU NOUVEL AGENT</div>
+
+      <div class="field-group">
+        <label class="field-label">Nom de l'Agent <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="field-input" id="agent-name" placeholder="ex. CodeArchitect, ResearchBot, BioinfoGPT…">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Rôle & Domaine d'Expertise <span style="color:var(--danger)">*</span></label>
+        <textarea class="field-textarea" id="agent-desc" rows="2" placeholder="Ex : Tu es un expert en bioinformatique spécialisé en génomique. Tu analyses les données scientifiques avec précision et cites tes sources."></textarea>
+        <div class="field-hint">▸ Décrivez la spécialité, le ton souhaité et les capacités principales de cet agent.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field-group">
+          <label class="field-label">Tags Mémoire</label>
+          <input type="text" class="field-input" id="agent-tags" placeholder="code, recherche, médecine">
+          <div class="field-hint">Séparés par des virgules</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Modèle préféré</label>
+          <select class="field-input field-select" id="agent-model-pref">
+            <option value="">Auto (par défaut)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Instructions Comportementales Avancées</label>
+        <textarea class="field-textarea" id="agent-instructions" rows="4" placeholder="Ex :&#10;- Réponds toujours en français sauf si l'utilisateur écrit en anglais&#10;- Structure tes réponses avec des sections claires&#10;- Cite systématiquement les sources et les APIs utilisées&#10;- Si la question dépasse ton domaine, dis-le clairement"></textarea>
+        <div class="field-hint">▸ Ces règles sont injectées dans chaque prompt système. Soyez précis pour un comportement optimal du cerveau central.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Phrase d'Amorce (Contexte Initial)</label>
+        <textarea class="field-textarea" id="agent-primer" rows="2" placeholder="Ex : 'Je commence chaque analyse par une revue des publications récentes sur PubMed…'"></textarea>
+        <div class="field-hint">▸ Contexte de départ injecté au début de la conversation.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-ghost" id="close-agent-modal-2">Annuler</button>
+        <button class="btn-primary" id="save-agent">⚙ CRÉER L'AGENT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODAL : DATA ═══════════════════ -->
+<div class="modal-overlay" id="data-modal">
+  <div class="modal-box">
+    <div class="corner-deco corner-tl"></div>
+    <div class="corner-deco corner-tr"></div>
+    <div class="corner-deco corner-bl"></div>
+    <div class="corner-deco corner-br"></div>
+    <div class="modal-header">
+      <div class="modal-title">⬡ GESTION DES DONNÉES</div>
+      <button class="modal-close" id="close-data-modal">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="info-block">
+        <strong>▸ Stockage 100% Local</strong><br>
+        Toutes vos données (conversations, agents, mémoires) sont stockées dans la base IndexedDB de votre navigateur. Exportez-les pour les sauvegarder ou les transférer sur un autre appareil.
+      </div>
+
+      <!-- STATS -->
+      <div class="data-grid" id="data-stats">
+        <div class="data-card"><div class="data-card-value" id="stat-chats">—</div><div class="data-card-label">Conversations</div></div>
+        <div class="data-card"><div class="data-card-value" id="stat-agents">—</div><div class="data-card-label">Agents</div></div>
+        <div class="data-card"><div class="data-card-value" id="stat-memories">—</div><div class="data-card-label">Mémoires</div></div>
+        <div class="data-card"><div class="data-card-value" id="stat-size">—</div><div class="data-card-label">Taille estimée</div></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="section-title">EXPORTER VOS DONNÉES</div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.6">Téléchargez toutes vos données dans un fichier <code style="font-family:var(--font-mono);font-size:10px;color:var(--cyan)">.voanh.json</code> que vous pourrez réimporter à tout moment.</p>
+      <button class="btn-primary" id="btn-export" style="width:100%;justify-content:center;display:flex;gap:8px;align-items:center">
+        ⬇ TÉLÉCHARGER TOUTES LES DONNÉES
+      </button>
+
+      <!-- IMPORT -->
+      <div class="section-title">IMPORTER DES DONNÉES</div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.6">Restaurez une sauvegarde précédente. <strong style="color:var(--warning)">Attention :</strong> les données existantes seront fusionnées (non remplacées).</p>
+
+      <!-- Zone sélection fichier -->
+      <div class="export-zone" id="import-drop-zone">
+        <div class="export-zone-icon">⬆</div>
+        <div class="export-zone-text">
+          <strong id="import-zone-label">Glissez votre fichier .voanh.json ici</strong>
+          ou cliquez pour sélectionner
+        </div>
+      </div>
+      <input type="file" id="import-file-input" accept=".json,.voanh.json" style="display:none">
+
+      <!-- Aperçu fichier sélectionné (caché par défaut) -->
+      <div id="import-preview" style="display:none;background:var(--hull);border:var(--hud-border);border-radius:var(--r);padding:14px 16px;margin-top:10px">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--cyan);margin-bottom:8px">FICHIER SÉLECTIONNÉ</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:22px">📄</span>
+          <div>
+            <div id="import-filename" style="font-family:var(--font-mono);font-size:12px;color:var(--text-bright)">—</div>
+            <div id="import-fileinfo" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:2px">—</div>
+          </div>
+        </div>
+        <div id="import-summary" style="font-size:12px;color:var(--text);line-height:1.7;background:var(--void);border-radius:var(--r);padding:10px 12px;margin-bottom:12px;border:1px solid var(--grid)">
+          Analyse en cours…
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-ghost" id="btn-import-cancel" style="flex:1">✕ Annuler</button>
+          <button class="btn-primary" id="btn-import-confirm" style="flex:2;justify-content:center;display:flex;gap:6px;align-items:center">
+            ✓ VALIDER ET RESTAURER
+          </button>
+        </div>
+      </div>
+
+      <!-- DANGER ZONE -->
+      <div class="section-title" style="border-top-color:rgba(255,51,102,0.3);color:rgba(255,51,102,0.6)">ZONE CRITIQUE</div>
+      <button class="btn-ghost" id="btn-clear-all" style="width:100%;justify-content:center;display:flex;border-color:rgba(255,51,102,0.3);color:var(--danger)">
+        ⚠ SUPPRIMER TOUTES LES DONNÉES LOCALES
+      </button>
+
+      <div class="btn-row" style="border-top:none;margin-top:12px;padding-top:0">
+        <button class="btn-ghost" id="close-data-modal-2">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════
+  JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+// ════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════
+const MODELS = [
+  { id:"mistral-small-2506",          name:"Mistral Flash",        desc:"Réponses instantanées, faible latence",             tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"ministral-8b-2512",           name:"MicroGenius 8B",       desc:"Compact mais puissant, polyvalent",                 tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"codestral-2508",              name:"CodeForge",            desc:"Expert en génération et optimisation de code",      tokens:50000,  ctx:"4M",   temp:0.48 },
+  { id:"devstral-2512",               name:"DevMind Ultra",        desc:"Assistant développement full-stack",                tokens:50000,  ctx:"4M",   temp:0.48 },
+  { id:"devstral-medium-2507",        name:"DevPulse Medium",      desc:"Équilibre parfait pour le dev quotidien",           tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"devstral-small-2507",         name:"DevSpark Lite",        desc:"Rapide et léger pour tâches dev simples",           tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"labs-mistral-small-creative", name:"CreatiFlow",           desc:"Explosion créative pour idées innovantes",          tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"magistral-medium-2509",       name:"MagiCore",             desc:"Puissance maîtrisée, réponse équilibrée",           tokens:75000,  ctx:"1B",   temp:0.48 },
+  { id:"magistral-small-2509",        name:"MagiSwift",            desc:"Intelligence rapide, précision optimale",           tokens:75000,  ctx:"1B",   temp:0.48 },
+  { id:"ministral-14b-2512",          name:"MiniTitan 14B",        desc:"Performance dense, efficacité maximale",            tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"ministral-3b-2512",           name:"NanoMind 3B",          desc:"Ultra-rapide, idéal pour micro-tâches",             tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"mistral-large-2512",          name:"Mistral Omega",        desc:"Dernière génération, intelligence suprême",         tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"mistral-medium-2505",         name:"Mistral Equinox",      desc:"Équilibre parfait vitesse/précision (375k ctx)",    tokens:375000, ctx:"-",    temp:0.48 },
+  { id:"mistral-medium-2508",         name:"Mistral Zenith",       desc:"Performance medium optimisée (375k ctx)",           tokens:375000, ctx:"-",    temp:0.48 },
+  { id:"mistral-small-2603",          name:"Mistral Nova",         desc:"Contexte très large, analyse approfondie (375k)",   tokens:375000, ctx:"-",    temp:1.44 },
+  { id:"open-mistral-nemo",           name:"Nemo OpenCore",        desc:"Polyvalent, open-source, fiable",                   tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"pixtral-12b-2409",            name:"Pixtral Visionary",    desc:"Analyse visuelle + texte, multimodal",              tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"pixtral-large-2411",          name:"Pixtral OmniSight",    desc:"Vision premium, compréhension profonde",            tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"voxtral-mini-2507",           name:"Voxtral Echo Mini",    desc:"Traitement audio léger et précis",                  tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"voxtral-small-2507",          name:"Voxtral Sonic",        desc:"Audio rapide, transcription intelligente",          tokens:50000,  ctx:"4M",   temp:0.42 }
+];
+
+const DB_NAME = "VOANH_AI_DB";
+const DB_VERSION = 3;
+
+let state = {
+  apiKey: null,
+  chatId: null,
+  messages: [],
+  agent: null,
+  model: "codestral-2508",
+  globalMemories: []
+};
+
+// ════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const uuid = () => crypto.randomUUID();
+const now = () => Date.now();
+
+const escapeHtml = t => (t||'')
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/\n/g,"<br>");
+
+const toast = (msg, type = "info") => {
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  const icon = type === "error" ? "⚠" : type === "success" ? "✓" : "◈";
+  t.innerHTML = `<span style="color:${type==='error'?'var(--danger)':type==='success'?'var(--neon)':'var(--cyan)'}">${icon}</span><span>${msg}</span>`;
+  $("#toast-container").appendChild(t);
+  setTimeout(() => t.remove(), 3800);
+};
+
+// Stockage persistant API key : cookie 365j + localStorage fallback
+const setCookie = (n, v, d = 365) => {
+  try {
+    const e = new Date(); e.setDate(e.getDate() + d);
+    document.cookie = `${n}=${encodeURIComponent(v)};expires=${e.toUTCString()};path=/;SameSite=Strict`;
+  } catch(err) {}
+  try { localStorage.setItem('voanh_' + n, v); } catch(err) {}
+};
+const getCookie = n => {
+  // Priorité : cookie, puis localStorage
+  try {
+    const m = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
+    if (m) return decodeURIComponent(m.pop());
+  } catch(err) {}
+  try { const v = localStorage.getItem('voanh_' + n); if (v) return v; } catch(err) {}
+  return null;
+};
+const deleteCookie = n => {
+  try { document.cookie = `${n}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Strict`; } catch(err) {}
+  try { localStorage.removeItem('voanh_' + n); } catch(err) {}
+};
+
+const isValidApiKey = k => {
+  const c = k.trim();
+  if (c.length < 20) return false;
+  return /^[A-Za-z0-9\-_]{20,}$/.test(c);
+};
+
+// ════════════════════════════════════════
+// INDEXEDDB
+// ════════════════════════════════════════
+const db = {
+  open: () => new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      ['chats','agents','settings','global_memory'].forEach(s => {
+        if (!d.objectStoreNames.contains(s)) d.createObjectStore(s, { keyPath:'id' });
+      });
+    };
+    req.onsuccess = e => { db.conn = e.target.result; res(db.conn); };
+    req.onerror = e => rej(e.target.error);
+  }),
+  put: (store, data) => new Promise((res, rej) => {
+    try {
+      const tx = db.conn.transaction(store, 'readwrite');
+      const r = tx.objectStore(store).put(data);
+      r.onsuccess = () => res(); r.onerror = e => rej(e.target.error);
+    } catch(e) { rej(e); }
+  }),
+  get: (store, id) => new Promise((res, rej) => {
+    try {
+      const tx = db.conn.transaction(store, 'readonly');
+      const r = tx.objectStore(store).get(id);
+      r.onsuccess = () => res(r.result); r.onerror = e => rej(e.target.error);
+    } catch(e) { rej(e); }
+  }),
+  getAll: store => new Promise((res, rej) => {
+    try {
+      const tx = db.conn.transaction(store, 'readonly');
+      const r = tx.objectStore(store).getAll();
+      r.onsuccess = () => res(r.result); r.onerror = e => rej(e.target.error);
+    } catch(e) { rej(e); }
+  }),
+  delete: (store, id) => new Promise((res, rej) => {
+    try {
+      const tx = db.conn.transaction(store, 'readwrite');
+      const r = tx.objectStore(store).delete(id);
+      r.onsuccess = () => res(); r.onerror = e => rej(e.target.error);
+    } catch(e) { rej(e); }
+  })
+};
+
+// ════════════════════════════════════════
+// MEMORY SYSTEM
+// ════════════════════════════════════════
+const memory = {
+  add: async (content, tags = []) => {
+    const entry = {
+      id: uuid(), content,
+      tags: Array.isArray(tags) ? tags : (tags||"").split(',').map(t=>t.trim()).filter(Boolean),
+      created: now(), importance: 1
+    };
+    await db.put('global_memory', entry);
+    state.globalMemories.push(entry);
+    renderMemoryList();
+    return entry;
+  },
+  getAll: async () => {
+    state.globalMemories = await db.getAll('global_memory') || [];
+    renderMemoryList();
+  },
+  clear: async () => {
+    const all = await db.getAll('global_memory') || [];
+    for (const m of all) await db.delete('global_memory', m.id);
+    state.globalMemories = [];
+    renderMemoryList();
+    toast("Mémoire globale effacée", "success");
+  },
+  getRelevant: (query, limit = 5) => {
+    if (!state.globalMemories?.length) return [];
+    const q = query.toLowerCase();
+    return state.globalMemories
+      .map(m => ({ ...m, score:(m.content.toLowerCase().includes(q)?2:0) + ((m.tags||[]).some(t=>q.includes(t.toLowerCase()))?1:0) + (m.importance||1) }))
+      .filter(m => m.score > 0)
+      .sort((a,b) => b.score - a.score)
+      .slice(0, limit)
+      .map(m => `[MEM:${(m.tags||[]).join(',')}] ${m.content}`);
+  }
+};
+
+function renderMemoryList() {
+  const list = $("#memory-list");
+  if (!state.globalMemories?.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:8px 0">Aucune mémoire enregistrée</div>';
+    return;
+  }
+  list.innerHTML = state.globalMemories.slice(-12).reverse().map(m => `
+    <div class="memory-item">
+      <div class="content">${escapeHtml(m.content)}</div>
+      <div class="actions"><button onclick="memoryDelete('${m.id}')">✕</button></div>
+    </div>
+  `).join('');
+}
+window.memoryDelete = async id => {
+  await db.delete('global_memory', id);
+  state.globalMemories = state.globalMemories.filter(m => m.id !== id);
+  renderMemoryList();
+};
+
+window.copyMsg = ts => {
+  const el = document.getElementById('mc-' + ts);
+  if (!el) return;
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => toast("Message copié !", "success")).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    toast("Message copié !", "success");
+  });
+};
+
+window.saveToMemory = async ts => {
+  const el = document.getElementById('mc-' + ts);
+  if (!el) return;
+  const text = (el.innerText || el.textContent).slice(0, 200);
+  await memory.add(text);
+  toast("Ajouté à la mémoire globale", "success");
+};
+
+// ════════════════════════════════════════
+// CHAT RENDERING
+// ════════════════════════════════════════
+function renderMessages() {
+  const c = $("#chat-container");
+  const msgs = (state.messages || []).filter(m => m.role !== 'system');
+
+  if (!msgs.length) {
+    c.innerHTML = `
+      <div class="welcome-banner">
+        <div class="wv-logo">VOANH</div>
+        <div class="wv-sub">MISTRAL AI INTERFACE v2.0</div>
+        <p>Interface avancée avec mémoire globale, agents spécialisés et accès aux ${MODELS.length} modèles Mistral AI. Configurez votre clé API pour commencer.</p>
+      </div>`;
+    return;
+  }
+
+  c.innerHTML = '';
+  msgs.forEach(m => {
+    const div = document.createElement("div");
+    div.className = `message ${m.role}`;
+    const memTags = m.memoryUsed?.length ? `<span class="mem-tag">⬡ MEM×${m.memoryUsed.length}</span>` : '';
+    const label = m.role === 'user' ? '▸ VOUS' : `▸ ${state.agent ? state.agent.name.toUpperCase() : 'VOANH'}`;
+    const msgId = m.ts || Date.now();
+    const memoBtn = m.role === 'assistant' ? '<button class="msg-action-btn" onclick="saveToMemory(' + msgId + ')">⬡ MÉMO</button>' : '';
+    div.innerHTML = `
+      <div class="msg-label">${label}</div>
+      <div class="message-content" id="mc-${msgId}">${escapeHtml(m.content || '')}</div>
+      <div class="msg-meta">
+        <span>${new Date(m.ts).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
+        ${memTags}
+      </div>
+      <div class="msg-actions">
+        <button class="msg-action-btn" onclick="copyMsg(${msgId})">⎘ COPIER</button>
+        ${memoBtn}
+      </div>`;
+    c.appendChild(div);
+  });
+  c.scrollTop = c.scrollHeight;
+}
+
+function showTyping() {
+  const div = document.createElement("div");
+  div.className = "typing-indicator";
+  div.id = "typing-indicator";
+  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  $("#chat-container").appendChild(div);
+  $("#chat-container").scrollTop = $("#chat-container").scrollHeight;
+}
+function hideTyping() {
+  const t = $("#typing-indicator");
+  if (t) t.remove();
+}
+
+// ════════════════════════════════════════
+// SYSTEM PROMPT
+// ════════════════════════════════════════
+function buildSystemPrompt() {
+  let prompt = "You are VOANH, a powerful AI assistant interface. Be precise, professional, and helpful.";
+  if (state.agent) {
+    prompt = `[AGENT VOANH : ${state.agent.name}]\n`;
+    prompt += `Rôle : ${state.agent.desc || ''}`;
+    if (state.agent.instructions) prompt += `\nInstructions : ${state.agent.instructions}`;
+    if (state.agent.primer) prompt += `\nContexte initial : ${state.agent.primer}`;
+  }
+  const rel = memory.getRelevant("context", 3);
+  if (rel.length) prompt += `\n\n[MÉMOIRE GLOBALE ACTIVE]\n${rel.join('\n')}`;
+  prompt += "\n\nRéponds dans la langue de l'utilisateur. Sois précis, structuré et professionnel.";
+  return prompt;
+}
+
+// ════════════════════════════════════════
+// ARCHIVES
+// ════════════════════════════════════════
+let archivesSearchQuery = "";
+
+async function renderArchives() {
+  const list = $("#archives-list");
+  if (!list) return;
+  try {
+    let chats = await db.getAll('chats') || [];
+    chats = chats.sort((a, b) => (b.updated||0) - (a.updated||0));
+    if (archivesSearchQuery) {
+      const q = archivesSearchQuery.toLowerCase();
+      chats = chats.filter(c => (c.title||"").toLowerCase().includes(q) ||
+        (c.messages||[]).some(m => (m.content||"").toLowerCase().includes(q)));
+    }
+    if (!chats.length) {
+      list.innerHTML = '<div class="archive-empty">Aucune conversation trouvée</div>';
+      return;
+    }
+    list.innerHTML = chats.map(c => {
+      const isActive = c.id === state.chatId;
+      const isFav = c.fav ? true : false;
+      const msgCount = (c.messages||[]).filter(m=>m.role!=='system').length;
+      const date = c.updated ? new Date(c.updated).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="archive-item${isActive?' active-chat':''}" onclick="loadArchiveChat('${c.id}')">
+        <span class="archive-item-icon">${isFav?'★':'◈'}</span>
+        <div class="archive-item-content">
+          <div class="archive-item-title">${escapeHtml(c.title||'Sans titre')}</div>
+          <div class="archive-item-meta">
+            <span>${msgCount} msg</span>
+            <span>${date}</span>
+          </div>
+        </div>
+        <button class="archive-fav-btn${isFav?' fav':''}" onclick="event.stopPropagation();toggleFav('${c.id}')" title="${isFav?'Retirer favoris':'Ajouter favoris'}">${isFav?'★':'☆'}</button>
+        <button class="archive-item-del" onclick="event.stopPropagation();deleteArchiveChat('${c.id}')" title="Supprimer">✕</button>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="archive-empty">Erreur de chargement</div>'; }
+}
+
+window.loadArchiveChat = async id => {
+  await loadChat(id);
+  closeArchivesPanel();
+  await renderArchives();
+  toast("Conversation chargée", "success");
+};
+
+window.deleteArchiveChat = async id => {
+  if (!confirm("Supprimer cette conversation ?")) return;
+  await db.delete('chats', id);
+  if (state.chatId === id) await newChat();
+  await renderArchives();
+  toast("Conversation supprimée", "success");
+};
+
+window.toggleFav = async id => {
+  try {
+    const chat = await db.get('chats', id);
+    if (!chat) return;
+    chat.fav = !chat.fav;
+    await db.put('chats', chat);
+    await renderArchives();
+  } catch(e) {}
+};
+
+// ════════════════════════════════════════
+// SAVE / LOAD CHAT
+// ════════════════════════════════════════
+async function saveChat() {
+  if (!state.chatId) return;
+  try {
+    const existingChat = await db.get('chats', state.chatId).catch(() => null);
+    await db.put('chats', {
+      id: state.chatId,
+      model: state.model,
+      agentId: state.agent?.id,
+      messages: state.messages,
+      title: (state.messages||[]).slice(1).find(m=>m.role==='user')?.content?.slice(0,50) || "Nouvelle conversation",
+      updated: now(),
+      fav: existingChat?.fav || false
+    });
+    renderArchives();
+  } catch(e) { console.error("saveChat:", e); }
+}
+
+async function newChat() {
+  state.chatId = uuid();
+  state.messages = [{ role:"system", content:buildSystemPrompt(), ts:now() }];
+  await saveChat();
+  try { await db.put('settings', { id:'currentChatId', value:state.chatId }); } catch(e) {}
+  renderMessages();
+}
+
+async function loadChat(id) {
+  try {
+    const chat = await db.get('chats', id);
+    if (!chat) return;
+    state.chatId = id;
+    state.messages = chat.messages || [];
+    state.model = chat.model || state.model;
+    $("#model-select").value = state.model;
+    if (chat.agentId) {
+      try {
+        const ag = await db.get('agents', chat.agentId);
+        if (ag) { state.agent = ag; $("#agent-select").value = ag.id; }
+      } catch(e) {}
+    }
+    renderMessages();
+  } catch(e) { console.error("loadChat:", e); }
+}
+
+// ════════════════════════════════════════
+// SEND MESSAGE
+// ════════════════════════════════════════
+async function sendMessage() {
+  const txt = $("#user-input").value.trim();
+  if (!txt) return;
+  if (!state.apiKey) {
+    toast("Configurez votre clé API d'abord", "error");
+    $("#api-modal").classList.add("active");
+    return;
+  }
+
+  state.messages.push({ role:"user", content:txt, ts:now() });
+  renderMessages();
+  $("#user-input").value = "";
+  autoResizeTextarea();
+  $("#send-btn").disabled = true;
+  $("#send-btn").innerHTML = '<span class="spin-ring"></span>';
+  showTyping();
+  await saveChat();
+
+  const relevantMems = memory.getRelevant(txt, 4);
+
+  try {
+    const contextMessages = [
+      { role:"system", content:buildSystemPrompt() },
+      ...(state.messages||[]).slice(-22).map(m => ({ role:m.role, content:m.content }))
+    ];
+    if (relevantMems.length) {
+      contextMessages.splice(1, 0, {
+        role:"user",
+        content:`[Contexte depuis la mémoire globale]\n${relevantMems.join('\n')}\n\nContinuez la conversation :`
+      });
+    }
+    const model = MODELS.find(m => m.id === state.model) || MODELS[2];
+    const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${state.apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: state.model,
+        messages: contextMessages,
+        temperature: model.temp,
+        max_tokens: 48096,
+        top_p: 0.95
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      let errMsg = err.slice(0, 300);
+      try { const j = JSON.parse(err); errMsg = j.message || j.error?.message || errMsg; } catch(e) {}
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || "Aucune réponse";
+    hideTyping();
+    state.messages.push({ role:"assistant", content:reply, ts:now(), memoryUsed:relevantMems.length ? relevantMems : undefined });
+    renderMessages();
+    await saveChat();
+  } catch (e) {
+    hideTyping();
+    toast(`Erreur API : ${e.message}`, "error");
+    state.messages.push({ role:"assistant", content:`⚠ Requête échouée : ${e.message}`, ts:now() });
+    renderMessages();
+  } finally {
+    $("#send-btn").disabled = false;
+    $("#send-btn").innerHTML = "SEND ▶";
+  }
+}
+
+// ════════════════════════════════════════
+// AGENTS
+// ════════════════════════════════════════
+async function loadAgents() {
+  try {
+    const agents = await db.getAll('agents') || [];
+    const sel = $("#agent-select");
+    sel.innerHTML = '<option value="">▸ NO AGENT</option>';
+    agents.forEach(a => {
+      const opt = document.createElement("option");
+      opt.value = a.id;
+      opt.textContent = `◈ ${a.name}`;
+      opt.title = a.desc;
+      sel.appendChild(opt);
+    });
+    // Existing agents in modal
+    const list = $("#agent-existing-list");
+    if (list) {
+      if (!agents.length) {
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = `
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px">AGENTS EXISTANTS (${agents.length})</div>
+        ${agents.map(a => `
+          <div class="agent-preview" onclick="activateAgent('${a.id}')">
+            <div>
+              <div class="agent-preview-name">◈ ${escapeHtml(a.name)}</div>
+              <div class="agent-preview-desc">${escapeHtml((a.desc||'').slice(0,80))}${(a.desc||'').length>80?'…':''}</div>
+            </div>
+            <button onclick="event.stopPropagation();deleteAgent('${a.id}')" style="background:transparent;border:1px solid rgba(255,51,102,0.3);color:var(--danger);font-size:10px;padding:4px 8px;border-radius:3px;cursor:pointer;font-family:var(--font-mono);flex-shrink:0">✕</button>
+          </div>
+        `).join('')}
+      `;
+    }
+  } catch(e) { console.error("loadAgents:", e); }
+}
+
+window.activateAgent = async id => {
+  try {
+    const ag = await db.get('agents', id);
+    if (ag) {
+      state.agent = ag;
+      $("#agent-select").value = id;
+      const sys = (state.messages||[]).find(m => m.role === "system");
+      if (sys) { sys.content = buildSystemPrompt(); await saveChat(); renderMessages(); }
+      toast(`Agent "${ag.name}" activé`, "success");
+      $("#agent-modal").classList.remove("active");
+    }
+  } catch(e) { console.error(e); }
+};
+
+window.deleteAgent = async id => {
+  if (!confirm("Supprimer cet agent ?")) return;
+  await db.delete('agents', id);
+  if (state.agent?.id === id) state.agent = null;
+  await loadAgents();
+  toast("Agent supprimé", "success");
+};
+
+// ════════════════════════════════════════
+// DATA EXPORT / IMPORT
+// ════════════════════════════════════════
+async function computeStats() {
+  try {
+    const chats = await db.getAll('chats') || [];
+    const agents = await db.getAll('agents') || [];
+    const mems = await db.getAll('global_memory') || [];
+    const json = JSON.stringify({ chats, agents, mems });
+    const sizeKb = (new Blob([json]).size / 1024).toFixed(1);
+    $("#stat-chats").textContent = chats.length;
+    $("#stat-agents").textContent = agents.length;
+    $("#stat-memories").textContent = mems.length;
+    $("#stat-size").textContent = sizeKb + " KB";
+  } catch(e) {}
+}
+
+async function exportData() {
+  try {
+    const chats = await db.getAll('chats') || [];
+    const agents = await db.getAll('agents') || [];
+    const mems = await db.getAll('global_memory') || [];
+    const settings = await db.getAll('settings') || [];
+    const payload = {
+      version: "2.0",
+      exported: new Date().toISOString(),
+      source: "VOANH",
+      data: { chats, agents, global_memory: mems, settings }
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `voanh-backup-${new Date().toISOString().slice(0,10)}.voanh.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("Données exportées avec succès !", "success");
+  } catch(e) {
+    toast("Erreur export : " + e.message, "error");
+  }
+}
+
+async function importData(file) {
+  try {
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    const data = payload.data || payload;
+    let count = 0;
+    if (data.chats?.length) {
+      for (const c of data.chats) { await db.put('chats', c); count++; }
+    }
+    if (data.agents?.length) {
+      for (const a of data.agents) { await db.put('agents', a); count++; }
+    }
+    if (data.global_memory?.length) {
+      for (const m of data.global_memory) { await db.put('global_memory', m); count++; }
+    }
+    await memory.getAll();
+    await loadAgents();
+    await computeStats();
+    toast(`Import réussi — ${count} éléments restaurés`, "success");
+  } catch(e) {
+    toast("Erreur import : " + e.message, "error");
+  }
+}
+
+// ════════════════════════════════════════
+// TEXTAREA AUTO-RESIZE
+// ════════════════════════════════════════
+function autoResizeTextarea() {
+  const ta = $("#user-input");
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  // DB
+  try { await db.open(); } catch(e) { console.error("DB init:", e); }
+
+  // Theme
+  try {
+    const t = await db.get('settings', 'theme');
+    if (t) {
+      document.documentElement.dataset.theme = t.value;
+      $("#theme-select").value = t.value;
+    }
+  } catch(e) {}
+
+  // Models
+  const modelSel = $("#model-select");
+  const agentModelPref = $("#agent-model-pref");
+  MODELS.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = `◈ ${m.name}`;
+    opt.title = `${m.desc} • ${m.tokens.toLocaleString()} max tokens`;
+    modelSel.appendChild(opt);
+    if (agentModelPref) {
+      const opt2 = document.createElement("option");
+      opt2.value = m.id;
+      opt2.textContent = m.name;
+      agentModelPref.appendChild(opt2);
+    }
+  });
+  try {
+    const savedModel = await db.get('settings', 'model');
+    if (savedModel) { state.model = savedModel.value; modelSel.value = state.model; }
+    else modelSel.value = state.model;
+  } catch(e) {}
+
+  // API Key
+  const cookieKey = getCookie("mistral_api_key");
+  if (cookieKey && isValidApiKey(cookieKey)) {
+    state.apiKey = cookieKey;
+    $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
+    $("#api-status").className = "status-pill active";
+    $("#open-api-modal").textContent = "⬡ CLÉ API";
+  }
+
+  // Memories & agents
+  await memory.getAll();
+  await loadAgents();
+  await renderArchives();
+
+  // Chat
+  try {
+    const savedChatId = await db.get('settings', 'currentChatId');
+    if (savedChatId?.value) await loadChat(savedChatId.value);
+    else await newChat();
+  } catch(e) { await newChat(); }
+
+  bindEvents();
+});
+
+// ════════════════════════════════════════
+// EVENTS
+// ════════════════════════════════════════
+function bindEvents() {
+  // Archives panel
+  const archivesBtn = $("#archives-btn");
+  const archivesPanel = $("#archives-panel");
+  const openArchivesDesktop = $("#open-archives-desktop");
+  const archivesMob = $("#archives-mob");
+
+  const openArchivesPanel = () => {
+    archivesPanel.classList.add("active");
+    renderArchives();
+  };
+
+  const closeArchivesPanel = () => {
+    archivesPanel.classList.remove("active");
+  };
+
+  if (archivesBtn) {
+    archivesBtn.onclick = e => {
+      e.stopPropagation();
+      openArchivesPanel();
+    };
+  }
+
+  if (openArchivesDesktop) {
+    openArchivesDesktop.onclick = openArchivesPanel;
+  }
+
+  if (archivesMob) {
+    archivesMob.onclick = () => {
+      closeBurger();
+      openArchivesPanel();
+    };
+  }
+
+  document.addEventListener('click', e => {
+    if (archivesPanel.classList.contains("active") && !archivesPanel.contains(e.target) && e.target !== archivesBtn && e.target !== openArchivesDesktop) {
+      closeArchivesPanel();
+    }
+  });
+
+  if ($("#archives-new-btn")) {
+    $("#archives-new-btn").onclick = e => { e.stopPropagation(); newChat(); closeArchivesPanel(); };
+  }
+  if ($("#archives-search-input")) {
+    $("#archives-search-input").oninput = e => { archivesSearchQuery = e.target.value; renderArchives(); };
+    $("#archives-search-input").onclick = e => e.stopPropagation();
+  }
+
+  // Scroll to bottom
+  const scrollBottomBtn = $("#scroll-bottom");
+  const chatContainer = $("#chat-container");
+  if (scrollBottomBtn && chatContainer) {
+    chatContainer.addEventListener('scroll', () => {
+      const distFromBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
+      scrollBottomBtn.classList.toggle("visible", distFromBottom > 150);
+    });
+    scrollBottomBtn.onclick = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
+  }
+
+  // Voice dictation
+  const voiceBtn = $("#voice-btn");
+  if (voiceBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SR();
+    recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = false;
+    let isRecording = false;
+    voiceBtn.onclick = () => {
+      if (isRecording) { recognition.stop(); return; }
+      recognition.start();
+      isRecording = true;
+      voiceBtn.classList.add("recording");
+      voiceBtn.title = "Arrêter la dictée";
+    };
+    recognition.onresult = e => {
+      const transcript = Array.from(e.results).map(r=>r[0].transcript).join('');
+      const inp = $("#user-input");
+      inp.value += (inp.value ? ' ' : '') + transcript;
+      autoResizeTextarea();
+    };
+    recognition.onend = () => { isRecording = false; voiceBtn.classList.remove("recording"); voiceBtn.title = "Dictée vocale"; };
+    recognition.onerror = () => { isRecording = false; voiceBtn.classList.remove("recording"); toast("Dictée vocale indisponible", "error"); };
+  } else if (voiceBtn) {
+    voiceBtn.style.display = "none";
+  }
+
+  // Send
+  $("#send-btn").onclick = sendMessage;
+  $("#user-input").oninput = autoResizeTextarea;
+  $("#user-input").onkeydown = e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  };
+
+  // Chat controls
+  $("#clear-chat").onclick = async () => {
+    state.messages = (state.messages||[]).filter(m => m.role === "system");
+    renderMessages();
+    await saveChat();
+    toast("Conversation effacée", "success");
+  };
+  $("#new-chat").onclick = newChat;
+
+  // Model
+  $("#model-select").onchange = e => {
+    state.model = e.target.value;
+    db.put('settings', { id:'model', value:state.model }).catch(()=>{});
+    const sys = (state.messages||[]).find(m => m.role === "system");
+    if (sys) { sys.content = buildSystemPrompt(); saveChat(); }
+  };
+
+  // Agent select
+  $("#agent-select").onchange = async e => {
+    try {
+      state.agent = e.target.value ? await db.get('agents', e.target.value) : null;
+      const sys = (state.messages||[]).find(m => m.role === "system");
+      if (sys) { sys.content = buildSystemPrompt(); await saveChat(); renderMessages(); }
+    } catch(err) { console.error(err); }
+  };
+
+  // Theme
+  $("#theme-select").onchange = e => {
+    document.documentElement.dataset.theme = e.target.value;
+    db.put('settings', { id:'theme', value:e.target.value }).catch(()=>{});
+  };
+
+  // API Modal
+  $("#open-api-modal").onclick = () => {
+    if (state.apiKey) {
+      // Pre-fill with current key (masked display via type=password)
+      $("#api-key-input").value = state.apiKey;
+    }
+    $("#api-modal").classList.add("active");
+  };
+  const closeApiModal = () => $("#api-modal").classList.remove("active");
+  $("#close-api-modal").onclick = closeApiModal;
+  if ($("#close-api-modal-2")) $("#close-api-modal-2").onclick = closeApiModal;
+  $("#api-modal").onclick = e => { if (e.target === $("#api-modal")) closeApiModal(); };
+
+  $("#save-api-key").onclick = () => {
+    const k = $("#api-key-input").value.trim();
+    if (!isValidApiKey(k)) {
+      toast("Clé invalide — min. 20 caractères alphanumériques", "error");
+      return;
+    }
+    setCookie("mistral_api_key", k);
+    state.apiKey = k;
+    $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
+    $("#api-status").className = "status-pill active";
+    if ($("#api-status-mob")) { $("#api-status-mob").innerHTML = '<span class="status-dot"></span>ONLINE'; $("#api-status-mob").className = "status-pill active"; }
+    closeApiModal();
+    toast("Clé API activée — persistante 365 jours !", "success");
+  };
+
+  if ($("#delete-api-key")) {
+    $("#delete-api-key").onclick = () => {
+      if (!confirm("Supprimer votre clé API sauvegardée ?")) return;
+      deleteCookie("mistral_api_key");
+      state.apiKey = null;
+      $("#api-key-input").value = "";
+      $("#api-status").innerHTML = '<span class="status-dot"></span>OFFLINE';
+      $("#api-status").className = "status-pill";
+      toast("Clé API supprimée", "success");
+    };
+  }
+
+  // Agent Modal
+  const openAgentModal = async () => {
+    await loadAgents();
+    $("#agent-modal").classList.add("active");
+  };
+  const closeAgentModal = () => $("#agent-modal").classList.remove("active");
+  $("#open-agent-modal").onclick = openAgentModal;
+  $("#close-agent-modal").onclick = closeAgentModal;
+  if ($("#close-agent-modal-2")) $("#close-agent-modal-2").onclick = closeAgentModal;
+  $("#agent-modal").onclick = e => { if (e.target === $("#agent-modal")) closeAgentModal(); };
+
+  $("#save-agent").onclick = async () => {
+    const name = $("#agent-name").value.trim();
+    const desc = $("#agent-desc").value.trim();
+    if (!name || !desc) { toast("Nom et rôle obligatoires", "error"); return; }
+    const agent = {
+      id: uuid(),
+      name,
+      desc,
+      instructions: $("#agent-instructions").value.trim(),
+      primer: ($("#agent-primer") ? $("#agent-primer").value.trim() : ""),
+      tags: ($("#agent-tags").value||"").split(',').map(t=>t.trim()).filter(Boolean),
+      modelPref: ($("#agent-model-pref") ? $("#agent-model-pref").value : ""),
+      created: now()
+    };
+    await db.put('agents', agent);
+    closeAgentModal();
+    await loadAgents();
+    $("#agent-select").value = agent.id;
+    state.agent = agent;
+    const sys = (state.messages||[]).find(m => m.role === "system");
+    if (sys) { sys.content = buildSystemPrompt(); await saveChat(); renderMessages(); }
+    toast(`Agent "${name}" créé et activé !`, "success");
+    ["agent-name","agent-desc","agent-instructions","agent-tags"].forEach(id => {
+      const el = $(`#${id}`);
+      if (el) el.value = "";
+    });
+    if ($("#agent-primer")) $("#agent-primer").value = "";
+  };
+
+  // Memory
+  $("#memory-toggle").onclick = () => $("#memory-panel").classList.toggle("active");
+  $("#memory-add").onclick = async () => {
+    const txt = $("#memory-input").value.trim();
+    if (!txt) return;
+    await memory.add(txt);
+    $("#memory-input").value = "";
+    toast("Mémoire ajoutée", "success");
+    const sys = (state.messages||[]).find(m => m.role === "system");
+    if (sys) { sys.content = buildSystemPrompt(); await saveChat(); }
+  };
+  $("#memory-input").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); $("#memory-add").click(); } };
+  $("#memory-clear").onclick = async () => {
+    if (confirm("Effacer toute la mémoire globale ?")) await memory.clear();
+  };
+
+  // Data Modal
+  const openDataModal = async () => {
+    await computeStats();
+    $("#data-modal").classList.add("active");
+  };
+  const closeDataModal = () => $("#data-modal").classList.remove("active");
+  if ($("#open-data-modal")) $("#open-data-modal").onclick = openDataModal;
+  if ($("#close-data-modal")) $("#close-data-modal").onclick = closeDataModal;
+  if ($("#close-data-modal-2")) $("#close-data-modal-2").onclick = closeDataModal;
+  if ($("#data-modal")) $("#data-modal").onclick = e => { if (e.target === $("#data-modal")) closeDataModal(); };
+
+  if ($("#btn-export")) $("#btn-export").onclick = exportData;
+
+  if ($("#btn-clear-all")) $("#btn-clear-all").onclick = async () => {
+    if (!confirm("⚠ Supprimer TOUTES les données locales VOANH ? Cette action est irréversible.")) return;
+    const stores = ['chats','agents','settings','global_memory'];
+    for (const s of stores) {
+      const all = await db.getAll(s) || [];
+      for (const r of all) await db.delete(s, r.id);
+    }
+    state.messages = [];
+    state.agent = null;
+    state.globalMemories = [];
+    await newChat();
+    await loadAgents();
+    renderMemoryList();
+    closeDataModal();
+    toast("Toutes les données supprimées", "success");
+  };
+
+  // Import zone — étape 1 : sélection + aperçu
+  let pendingImportFile = null;
+
+  const dropZone = $("#import-drop-zone");
+  const fileInput = $("#import-file-input");
+  const importPreview = $("#import-preview");
+
+  const showImportPreview = async (file) => {
+    pendingImportFile = file;
+    $("#import-filename").textContent = file.name;
+    $("#import-fileinfo").textContent = `${(file.size / 1024).toFixed(1)} KB — ${new Date(file.lastModified).toLocaleDateString('fr-FR')}`;
+    $("#import-summary").textContent = "Analyse en cours…";
+    importPreview.style.display = "block";
+    dropZone.style.opacity = "0.4";
+
+    try {
+      const text = await file.text();
+      const payload = JSON.parse(text);
+      const data = payload.data || payload;
+      const nbChats = data.chats?.length || 0;
+      const nbAgents = data.agents?.length || 0;
+      const nbMems = data.global_memory?.length || 0;
+      const exported = payload.exported ? `Sauvegarde du ${new Date(payload.exported).toLocaleString('fr-FR')}` : "Date inconnue";
+      $("#import-summary").innerHTML = `
+        <strong style="color:var(--neon)">✓ Fichier valide</strong><br>
+        ${exported}<br>
+        ▸ ${nbChats} conversation(s) &nbsp;|&nbsp; ${nbAgents} agent(s) &nbsp;|&nbsp; ${nbMems} souvenir(s)
+      `;
+    } catch(e) {
+      $("#import-summary").innerHTML = `<span style="color:var(--danger)">⚠ Fichier invalide ou corrompu : ${e.message}</span>`;
+      pendingImportFile = null;
+    }
+  };
+
+  const resetImportUI = () => {
+    pendingImportFile = null;
+    importPreview.style.display = "none";
+    dropZone.style.opacity = "1";
+    if (fileInput) fileInput.value = "";
+  };
+
+  if (dropZone && fileInput) {
+    dropZone.onclick = () => fileInput.click();
+    dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add("dragover"); };
+    dropZone.ondragleave = () => dropZone.classList.remove("dragover");
+    dropZone.ondrop = e => {
+      e.preventDefault();
+      dropZone.classList.remove("dragover");
+      const file = e.dataTransfer.files[0];
+      if (file) showImportPreview(file);
+    };
+    fileInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) showImportPreview(file);
+    };
+  }
+
+  // Import étape 2 : confirmer
+  if ($("#btn-import-confirm")) {
+    $("#btn-import-confirm").onclick = async () => {
+      if (!pendingImportFile) return;
+      const btn = $("#btn-import-confirm");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin-ring"></span> RESTAURATION…';
+      try {
+        await importData(pendingImportFile);
+        resetImportUI();
+        await computeStats();
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✓ VALIDER ET RESTAURER';
+      }
+    };
+  }
+  if ($("#btn-import-cancel")) {
+    $("#btn-import-cancel").onclick = resetImportUI;
+  }
+
+  // ══ BURGER MENU MOBILE ══
+  const burgerBtn = $("#burger-btn");
+  const mobileMenu = $("#mobile-menu");
+
+  const closeBurger = () => mobileMenu.classList.remove("open");
+
+  if (burgerBtn && mobileMenu) {
+    burgerBtn.onclick = (e) => {
+      e.stopPropagation();
+      mobileMenu.classList.toggle("open");
+    };
+
+    // Sync mobile selects with desktop selects
+    const syncMobile = () => {
+      const mMod = $("#model-select-mob");
+      const mAgent = $("#agent-select-mob");
+      const mTheme = $("#theme-select-mob");
+      if (mMod) { mMod.innerHTML = $("#model-select").innerHTML; mMod.value = state.model; }
+      if (mAgent) { mAgent.innerHTML = $("#agent-select").innerHTML; mAgent.value = state.agent?.id || ""; }
+      if (mTheme) mTheme.value = document.documentElement.dataset.theme;
+    };
+
+    mobileMenu.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('click', () => closeBurger());
+
+    // Mobile model select
+    const mModSel = $("#model-select-mob");
+    if (mModSel) {
+      // Populate
+      MODELS.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = `◈ ${m.name}`;
+        mModSel.appendChild(opt);
+      });
+      mModSel.value = state.model;
+      mModSel.onchange = e => {
+        state.model = e.target.value;
+        $("#model-select").value = state.model;
+        db.put('settings', { id:'model', value:state.model }).catch(()=>{});
+        const sys = (state.messages||[]).find(m => m.role === "system");
+        if (sys) { sys.content = buildSystemPrompt(); saveChat(); }
+      };
+    }
+
+    // Mobile agent select
+    const mAgentSel = $("#agent-select-mob");
+    if (mAgentSel) {
+      mAgentSel.onchange = async e => {
+        try {
+          state.agent = e.target.value ? await db.get('agents', e.target.value) : null;
+          $("#agent-select").value = e.target.value;
+          const sys = (state.messages||[]).find(m => m.role === "system");
+          if (sys) { sys.content = buildSystemPrompt(); await saveChat(); renderMessages(); }
+        } catch(err) { console.error(err); }
+      };
+    }
+
+    // Mobile theme select
+    const mThemeSel = $("#theme-select-mob");
+    if (mThemeSel) {
+      mThemeSel.onchange = e => {
+        document.documentElement.dataset.theme = e.target.value;
+        $("#theme-select").value = e.target.value;
+        db.put('settings', { id:'theme', value:e.target.value }).catch(()=>{});
+      };
+    }
+
+    // Mobile API modal
+    if ($("#open-api-modal-mob")) $("#open-api-modal-mob").onclick = () => { closeBurger(); $("#api-modal").classList.add("active"); };
+    // Mobile Agent modal
+    if ($("#open-agent-modal-mob")) $("#open-agent-modal-mob").onclick = async () => { closeBurger(); await loadAgents(); $("#agent-modal").classList.add("active"); };
+    // Mobile Data modal
+    if ($("#open-data-modal-mob")) $("#open-data-modal-mob").onclick = async () => { closeBurger(); await computeStats(); $("#data-modal").classList.add("active"); };
+    // Mobile clear / new
+    if ($("#clear-chat-mob")) $("#clear-chat-mob").onclick = () => { closeBurger(); $("#clear-chat").click(); };
+    if ($("#new-chat-mob")) $("#new-chat-mob").onclick = () => { closeBurger(); newChat(); };
+
+    // Sync mobile status pill
+    const syncStatusMob = () => {
+      const mob = $("#api-status-mob");
+      if (!mob) return;
+      mob.innerHTML = $("#api-status").innerHTML;
+      mob.className = $("#api-status").className;
+    };
+
+    // Override the api status update to also sync mobile
+    const origSaveKey = document.getElementById("save-api-key");
+    if (origSaveKey) {
+      const origClick = origSaveKey.onclick;
+      origSaveKey.onclick = (...args) => {
+        if (origClick) origClick.apply(this, args);
+        setTimeout(syncStatusMob, 100);
+      };
+    }
+
+    // Sync on open
+    burgerBtn.addEventListener('click', syncStatusMob);
+  }
+
+  // Close memory panel on outside click
+  document.addEventListener('click', e => {
+    const panel = $("#memory-panel");
+    const toggle = $("#memory-toggle");
+    if (panel.classList.contains("active") && !panel.contains(e.target) && e.target !== toggle) {
+      panel.classList.remove("active");
+    }
+  });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
