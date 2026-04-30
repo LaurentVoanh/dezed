@@ -1536,26 +1536,26 @@ body::before {
 // CONFIG
 // ════════════════════════════════════════
 const MODELS = [
-  { id:"mistral-small-2506",          name:"Mistral Flash",        desc:"Réponses instantanées, faible latence",             tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"ministral-8b-2512",           name:"MicroGenius 8B",       desc:"Compact mais puissant, polyvalent",                 tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"codestral-2508",              name:"CodeForge",            desc:"Expert en génération et optimisation de code",      tokens:50000,  ctx:"4M",   temp:0.48 },
-  { id:"devstral-2512",               name:"DevMind Ultra",        desc:"Assistant développement full-stack",                tokens:50000,  ctx:"4M",   temp:0.48 },
-  { id:"devstral-medium-2507",        name:"DevPulse Medium",      desc:"Équilibre parfait pour le dev quotidien",           tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"devstral-small-2507",         name:"DevSpark Lite",        desc:"Rapide et léger pour tâches dev simples",           tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"labs-mistral-small-creative", name:"CreatiFlow",           desc:"Explosion créative pour idées innovantes",          tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"magistral-medium-2509",       name:"MagiCore",             desc:"Puissance maîtrisée, réponse équilibrée",           tokens:75000,  ctx:"1B",   temp:0.48 },
-  { id:"magistral-small-2509",        name:"MagiSwift",            desc:"Intelligence rapide, précision optimale",           tokens:75000,  ctx:"1B",   temp:0.48 },
-  { id:"ministral-14b-2512",          name:"MiniTitan 14B",        desc:"Performance dense, efficacité maximale",            tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"ministral-3b-2512",           name:"NanoMind 3B",          desc:"Ultra-rapide, idéal pour micro-tâches",             tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"mistral-large-2512",          name:"Mistral Omega",        desc:"Dernière génération, intelligence suprême",         tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"mistral-medium-2505",         name:"Mistral Equinox",      desc:"Équilibre parfait vitesse/précision (375k ctx)",    tokens:375000, ctx:"-",    temp:0.48 },
-  { id:"mistral-medium-2508",         name:"Mistral Zenith",       desc:"Performance medium optimisée (375k ctx)",           tokens:375000, ctx:"-",    temp:0.48 },
-  { id:"mistral-small-2603",          name:"Mistral Nova",         desc:"Contexte très large, analyse approfondie (375k)",   tokens:375000, ctx:"-",    temp:1.44 },
-  { id:"open-mistral-nemo",           name:"Nemo OpenCore",        desc:"Polyvalent, open-source, fiable",                   tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"pixtral-12b-2409",            name:"Pixtral Visionary",    desc:"Analyse visuelle + texte, multimodal",              tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"pixtral-large-2411",          name:"Pixtral OmniSight",    desc:"Vision premium, compréhension profonde",            tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"voxtral-mini-2507",           name:"Voxtral Echo Mini",    desc:"Traitement audio léger et précis",                  tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"voxtral-small-2507",          name:"Voxtral Sonic",        desc:"Audio rapide, transcription intelligente",          tokens:50000,  ctx:"4M",   temp:0.42 }
+  { id:"mistral-small-2506",          name:"Mistral Flash",        desc:"Réponses instantanées, faible latence",             tokens:50000,  ctx:"4M",   temp:0.42, badge:"⚡ Rapide", badgeClass:"badge-neon" },
+  { id:"ministral-8b-2512",           name:"MicroGenius 8B",       desc:"Compact mais puissant, polyvalent",                 tokens:50000,  ctx:"4M",   temp:0.42, badge:"⚡ Rapide", badgeClass:"badge-neon" },
+  { id:"codestral-2508",              name:"CodeForge",            desc:"Expert en génération et optimisation de code",      tokens:50000,  ctx:"4M",   temp:0.48, badge:"💻 Code", badgeClass:"badge-violet" },
+  { id:"devstral-2512",               name:"DevMind Ultra",        desc:"Assistant développement full-stack",                tokens:50000,  ctx:"4M",   temp:0.48, badge:"💻 Code", badgeClass:"badge-violet" },
+  { id:"devstral-medium-2507",        name:"DevPulse Medium",      desc:"Équilibre parfait pour le dev quotidien",           tokens:50000,  ctx:"4M",   temp:0.42, badge:"💻 Code", badgeClass:"badge-violet" },
+  { id:"devstral-small-2507",         name:"DevSpark Lite",        desc:"Rapide et léger pour tâches dev simples",           tokens:50000,  ctx:"4M",   temp:0.42, badge:"💻 Code", badgeClass:"badge-violet" },
+  { id:"labs-mistral-small-creative", name:"CreatiFlow",           desc:"Explosion créative pour idées innovantes",          tokens:50000,  ctx:"4M",   temp:0.42, badge:"🔥 Créatif", badgeClass:"badge-plasma" },
+  { id:"magistral-medium-2509",       name:"MagiCore",             desc:"Puissance maîtrisée, réponse équilibrée",           tokens:75000,  ctx:"1B",   temp:0.48, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"magistral-small-2509",        name:"MagiSwift",            desc:"Intelligence rapide, précision optimale",           tokens:75000,  ctx:"1B",   temp:0.48, badge:"⚡ Rapide", badgeClass:"badge-neon" },
+  { id:"ministral-14b-2512",          name:"MiniTitan 14B",        desc:"Performance dense, efficacité maximale",            tokens:50000,  ctx:"4M",   temp:0.42, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"ministral-3b-2512",           name:"NanoMind 3B",          desc:"Ultra-rapide, idéal pour micro-tâches",             tokens:50000,  ctx:"4M",   temp:0.42, badge:"⚡ Rapide", badgeClass:"badge-neon" },
+  { id:"mistral-large-2512",          name:"Mistral Omega",        desc:"Dernière génération, intelligence suprême",         tokens:50000,  ctx:"4M",   temp:0.42, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"mistral-medium-2505",         name:"Mistral Equinox",      desc:"Équilibre parfait vitesse/précision (375k ctx)",    tokens:375000, ctx:"-",    temp:0.48, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"mistral-medium-2508",         name:"Mistral Zenith",       desc:"Performance medium optimisée (375k ctx)",           tokens:375000, ctx:"-",    temp:0.48, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"mistral-small-2603",          name:"Mistral Nova",         desc:"Contexte très large, analyse approfondie (375k)",   tokens:375000, ctx:"-",    temp:1.44, badge:"🔥 Puissant", badgeClass:"badge-plasma" },
+  { id:"open-mistral-nemo",           name:"Nemo OpenCore",        desc:"Polyvalent, open-source, fiable",                   tokens:50000,  ctx:"4M",   temp:0.42, badge:"⚡ Rapide", badgeClass:"badge-neon" },
+  { id:"pixtral-12b-2409",            name:"Pixtral Visionary",    desc:"Analyse visuelle + texte, multimodal",              tokens:50000,  ctx:"4M",   temp:0.42, badge:"👁 Vision", badgeClass:"badge-violet" },
+  { id:"pixtral-large-2411",          name:"Pixtral OmniSight",    desc:"Vision premium, compréhension profonde",            tokens:50000,  ctx:"4M",   temp:0.42, badge:"👁 Vision", badgeClass:"badge-violet" },
+  { id:"voxtral-mini-2507",           name:"Voxtral Echo Mini",    desc:"Traitement audio léger et précis",                  tokens:50000,  ctx:"4M",   temp:0.42, badge:"🎤 Audio", badgeClass:"badge-neon" },
+  { id:"voxtral-small-2507",          name:"Voxtral Sonic",        desc:"Audio rapide, transcription intelligente",          tokens:50000,  ctx:"4M",   temp:0.42, badge:"🎤 Audio", badgeClass:"badge-neon" }
 ];
 
 const DB_NAME = "VOANH_AI_DB";
